@@ -1,0 +1,25 @@
+{
+  "name": "entities-practice",
+  "version": "1.0.5",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MoonSupport/entitiy-for-msa-practice.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "typeorm": "^0.2.37"
+  },
+  "devDependencies": {
+    "@types/node": "^16.9.6",
+    "typescript": "^4.4.3",
+    "typings": "^2.1.1"
+  }
+}

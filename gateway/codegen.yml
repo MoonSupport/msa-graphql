@@ -1,0 +1,19 @@
+overwrite: true
+schema: 'http://localhost:4001/graphql'
+documents: null
+generates:
+  src/graphql/generated/graphql.ts:
+    plugins:
+      - 'typescript'
+      - 'typescript-resolvers'
+    config:
+      scalars:
+        ID: number
+      federation: true
+      namingConvention:
+        enumValues: change-case#constantCase
+      # enumValues:
+      # Key: Value
+      mappers:
+        Book: ../../entity#Book
+      useIndexSignature: true
