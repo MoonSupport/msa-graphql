@@ -1,10 +1,8 @@
-import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { Book } from '../../entity';
+import { GraphQLResolveInfo } from 'graphql';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -13,7 +11,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  _Any: any;
+  _FieldSet: any;
 };
 
 export type Author = {
@@ -47,6 +45,17 @@ export type ResolversObject<TObject> = WithIndex<TObject>;
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
 
+export type ReferenceResolver<TResult, TReference, TContext> = (
+      reference: TReference,
+      context: TContext,
+      info: GraphQLResolveInfo
+    ) => Promise<TResult> | TResult;
+
+      type ScalarCheck<T, S> = S extends true ? T : NullableCheck<T, S>;
+      type NullableCheck<T, S> = Maybe<T> extends T ? Maybe<ListCheck<NonNullable<T>, S>> : ListCheck<T, S>;
+      type ListCheck<T, S> = T extends (infer U)[] ? NullableCheck<U, S>[] : GraphQLRecursivePick<T, S>;
+      export type GraphQLRecursivePick<T, S> = { [K in keyof T & keyof S]: ScalarCheck<T[K], S[K]> };
+    
 
 export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
@@ -112,37 +121,28 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
-  Author: ResolverTypeWrapper<Omit<Author, 'books'> & { books?: Maybe<Array<Maybe<ResolversTypes['Book']>>> }>;
-  Book: ResolverTypeWrapper<Book>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Author: ResolverTypeWrapper<Author>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
-  Query: ResolverTypeWrapper<{}>;
+  Book: ResolverTypeWrapper<Book>;
   String: ResolverTypeWrapper<Scalars['String']>;
-  _Any: ResolverTypeWrapper<Scalars['_Any']>;
-  _Entity: ResolversTypes['Author'];
-  _Service: ResolverTypeWrapper<_Service>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Query: ResolverTypeWrapper<{}>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
-  Author: Omit<Author, 'books'> & { books?: Maybe<Array<Maybe<ResolversParentTypes['Book']>>> };
-  Book: Book;
-  Boolean: Scalars['Boolean'];
+  Author: Author;
   ID: Scalars['ID'];
-  Query: {};
+  Book: Book;
   String: Scalars['String'];
-  _Any: Scalars['_Any'];
-  _Entity: ResolversParentTypes['Author'];
-  _Service: _Service;
+  Boolean: Scalars['Boolean'];
+  Query: {};
 }>;
 
-export type ExtendsDirectiveArgs = { };
-
-export type ExtendsDirectiveResolver<Result, Parent, ContextType = any, Args = ExtendsDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
-
 export type AuthorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Author'] = ResolversParentTypes['Author']> = ResolversObject<{
-  books?: Resolver<Maybe<Array<Maybe<ResolversTypes['Book']>>>, ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Author']>, { __typename: 'Author' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+  books?: Resolver<Maybe<Array<Maybe<ResolversTypes['Book']>>>, { __typename: 'Author' } & GraphQLRecursivePick<ParentType, {"id":true}>, ContextType>;
+
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -156,34 +156,13 @@ export type BookResolvers<ContextType = any, ParentType extends ResolversParentT
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  _entities?: Resolver<Array<Maybe<ResolversTypes['_Entity']>>, ParentType, ContextType, RequireFields<Query_EntitiesArgs, 'representations'>>;
-  _service?: Resolver<ResolversTypes['_Service'], ParentType, ContextType>;
   book?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType, RequireFields<QueryBookArgs, 'id'>>;
   books?: Resolver<Maybe<Array<Maybe<ResolversTypes['Book']>>>, ParentType, ContextType>;
-}>;
-
-export interface _AnyScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['_Any'], any> {
-  name: '_Any';
-}
-
-export type _EntityResolvers<ContextType = any, ParentType extends ResolversParentTypes['_Entity'] = ResolversParentTypes['_Entity']> = ResolversObject<{
-  __resolveType: TypeResolveFn<'Author', ParentType, ContextType>;
-}>;
-
-export type _ServiceResolvers<ContextType = any, ParentType extends ResolversParentTypes['_Service'] = ResolversParentTypes['_Service']> = ResolversObject<{
-  sdl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type Resolvers<ContextType = any> = ResolversObject<{
   Author?: AuthorResolvers<ContextType>;
   Book?: BookResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
-  _Any?: GraphQLScalarType;
-  _Entity?: _EntityResolvers<ContextType>;
-  _Service?: _ServiceResolvers<ContextType>;
 }>;
 
-export type DirectiveResolvers<ContextType = any> = ResolversObject<{
-  extends?: ExtendsDirectiveResolver<any, any, ContextType>;
-}>;

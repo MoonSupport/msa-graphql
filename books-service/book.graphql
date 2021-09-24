@@ -1,0 +1,17 @@
+type Book {
+  id: ID!
+  title: String!
+  description: String!
+  isReserved: Boolean!
+  author: Author
+}
+
+extend type Author @key(fields: "id") {
+  id: ID! @external
+  books: [Book]
+}
+
+extend type Query {
+  book(id: ID!): Book
+  books: [Book]
+}

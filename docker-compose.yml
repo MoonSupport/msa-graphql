@@ -1,0 +1,54 @@
+version: "3"
+
+services:
+  author-service:
+    build:
+      context: ./author-service
+      dockerfile: ./Dockerfile
+    expose:
+      - 4002
+    # environment:
+    #   - DB_HOST=${AUTHOR_DB_HOST}
+    #   - DB_USERNAME=${AUTHOR_DB_USERNAME}
+    #   - DB_PASSWORD=${AUTHOR_DB_PASSWORD}
+    #   - DB_DATABASE=${AUTHOR_DB_DATABASE}
+    ports:
+      - "4002:4002"
+    networks:
+      - federation
+
+  books-service:
+    build:
+      context: ./books-service
+      dockerfile: ./Dockerfile
+    expose:
+      - 4001
+    # environment:
+    #   - DB_HOST=${BOOK_DB_HOST}
+    #   - DB_USERNAME=${BOOK_DB_USERNAME}
+    #   - DB_PASSWORD=${BOOK_DB_PASSWORD}
+    #   - DB_DATABASE=${BOOK_DB_DATABASE}
+    restart: always
+    ports:
+      - "4001:4001"
+    networks:
+      - federation
+
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: ./Dockerfile
+
+    expose:
+      - 4000
+    restart: always
+    ports:
+      - "4000:4000"
+    networks:
+      - federation
+    depends_on:
+      - books-service
+      - author-service
+networks:
+  federation:
+    driver: bridge

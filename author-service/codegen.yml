@@ -1,5 +1,5 @@
 overwrite: true
-schema: 'http://localhost:4002/graphql'
+schema: '*.graphql'
 documents: null
 generates:
   src/graphql/generated/graphql.ts:
@@ -14,6 +14,4 @@ generates:
         enumValues: change-case#constantCase
       # enumValues:
       # Key: Value
-      mappers:
-        Author: ../../entity#Author
       useIndexSignature: true

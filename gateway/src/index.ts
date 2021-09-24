@@ -7,11 +7,11 @@ const startServer = () => {
     serviceList: [
       {
         name: 'books',
-        url: 'http://localhost:4001',
+        url: 'http://host.docker.internal:4001',
       },
       {
         name: 'authors',
-        url: 'http://localhost:4002',
+        url: 'http://host.docker.internal:4002',
       },
     ],
   });

@@ -3,20 +3,12 @@ import { buildFederatedSchema } from '@apollo/federation';
 import { Author, initDB } from 'entities-practice';
 import 'reflect-metadata';
 import { Connection } from 'typeorm';
+import { importSchema } from 'graphql-import';
 import { Resolvers } from './graphql/generated/graphql';
+
 const port = 4002;
 
-const typeDefs = gql`
-  type Author @key(fields: "id") {
-    id: ID!
-    name: String
-  }
-
-  extend type Query {
-    author(id: ID!): Author
-    authors: [Author]
-  }
-`;
+const typeDefs = gql(importSchema('author.graphql'));
 
 const resolvers: Resolvers = {
   Author: {

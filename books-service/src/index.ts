@@ -3,28 +3,12 @@ import { buildFederatedSchema } from '@apollo/federation';
 import { Author, Book, initDB } from 'entities-practice';
 import 'reflect-metadata';
 import { Connection } from 'typeorm';
+import { importSchema } from 'graphql-import';
 import { Resolvers } from './graphql/generated/graphql';
+
 const port = 4001;
 
-const typeDefs = gql`
-  type Book {
-    id: ID!
-    title: String!
-    description: String!
-    isReserved: Boolean!
-    author: Author
-  }
-
-  extend type Author @key(fields: "id") {
-    id: ID! @external
-    books: [Book]
-  }
-
-  extend type Query {
-    book(id: ID!): Book
-    books: [Book]
-  }
-`;
+const typeDefs = gql(importSchema('book.graphql'));
 
 const resolvers: Resolvers = {
   Author: {
@@ -39,7 +23,7 @@ const resolvers: Resolvers = {
   Book: {
     author(book) {
       return {
-        id: book.authorID,
+        id: book.author.id,
         __typename: 'Author',
       };
     },
