@@ -1,6 +1,6 @@
 import { ApolloServer, gql } from 'apollo-server';
 import { buildFederatedSchema } from '@apollo/federation';
-import { Author, Book, initDB } from 'entities-practice';
+import { Book, initDB } from 'entities-practice';
 import 'reflect-metadata';
 import { Connection } from 'typeorm';
 import { importSchema } from 'graphql-import';
@@ -46,7 +46,7 @@ export interface AppContext {
 
 const init = async () => {
   //@ts-ignore
-  const connection = await initDB({ entities: [Author, Book] });
+  const connection = await initDB({ entities: [Book] });
   const server = new ApolloServer({
     schema: buildFederatedSchema([{ typeDefs, resolvers }]),
     context: {
